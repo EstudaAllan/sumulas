@@ -367,7 +367,7 @@ mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 1px}
       <div class="toolbar">
         <label class="f" for="fcT">Tribunal<select id="fcT"><option value="all">Todos</option><option value="SV">Vinculantes</option><option value="STF">STF</option><option value="STJ">STJ</option></select></label>
         <label class="f" for="fcA">Área<select id="fcA"></select></label>
-        <label class="f" for="fcF">Quais<select id="fcF"><option value="valida">Só válidas</option><option value="imp">Só importantes</option><option value="naolida">Só não lidas</option><option value="all">Todas</option></select></label>
+        <label class="f" for="fcF">Quais<select id="fcF"><option value="valida">Só válidas</option><option value="lida">Só as que já li</option><option value="imp">Só importantes</option><option value="naolida">Só não lidas</option><option value="all">Todas</option></select></label>
         <label class="f" for="fcM">Modo<select id="fcM"><option value="num">Número → enunciado</option><option value="txt">Enunciado → número</option></select></label>
         <button class="btn primary" id="fcBuild" type="button" style="align-self:flex-end">Montar baralho</button>
       </div>
@@ -790,7 +790,8 @@ function dayBody(c){return c.map(r=>`<label class="mini" data-id="${r.id}"><inpu
 const FC={deck:[],i:0,ok:0,err:0,wrong:new Set(),mode:'num'};
 function buildDeck(ids){
   const t=$('#fcT').value,a=$('#fcA').value,f=$('#fcF').value;FC.mode=$('#fcM').value;
-  FC.deck=ids?ids.slice():DATA.filter(r=>inScope(r,t,a)&&r.s!=='pendente'&&(f==='all'||(f==='valida'&&r.s==='valida')||(f==='imp'&&S.imp[r.id])||(f==='naolida'&&!S.read[r.id]&&r.s==='valida'))).map(r=>r.id);
+  FC.deck=ids?ids.slice():DATA.filter(r=>inScope(r,t,a)&&r.s!=='pendente'&&(f==='all'||(f==='valida'&&r.s==='valida')||(f==='imp'&&S.imp[r.id])||(f==='naolida'&&!S.read[r.id]&&r.s==='valida')||(f==='lida'&&S.read[r.id]))).map(r=>r.id);
+  if(!ids&&f==='lida'&&!FC.deck.length)toast('Nenhuma súmula marcada como lida neste recorte');
   FC.i=0;FC.ok=0;FC.err=0;if(!ids)FC.wrong=new Set();renderFC();
 }
 function renderFC(){
